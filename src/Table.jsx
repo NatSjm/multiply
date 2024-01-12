@@ -9,6 +9,7 @@ function getRandomInt(min, max) {
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min)) + min;
 }
+
 const Table = () => {
 	const [a, setA] = useState(getRandomInt(2, 10));
 	const [b, setB] = useState(getRandomInt(2, 10));
@@ -20,7 +21,7 @@ const Table = () => {
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		if(timeLeft > 0){
+		if (timeLeft > 0) {
 			setTimeout(() => {
 				setTimeLeft(prevTimeleft => prevTimeleft - 1);
 			}, 1000)
@@ -30,7 +31,7 @@ const Table = () => {
 	}, [timeLeft])
 
 	const handleKeyPress = (event) => {
-		if (event.key === 'Enter') {
+		if (event.key === 'Enter' && mode === 'inProgress') {
 			handleClick()
 		}
 	};
@@ -42,14 +43,19 @@ const Table = () => {
 		setResult('');
 		inputRef.current.focus()
 	}
+
+	const handleButtonClick = () => {
+		inputRef.current.focus();
+		handleClick()
+	}
 	const handleClick = () => {
-		const rightResult = a*b;
+		const rightResult = a * b;
 		// eslint-disable-next-line
-		if(rightResult == result){
+		if (rightResult == result) {
 			setMessage('Молодец, Лада. Давай ещё');
-            setTotal((prev) => prev + 1)
+			setTotal((prev) => prev + 1)
 		} else {
-			setMessage('Не правильно. ' + a + ' * ' + b + ' = '  + rightResult);
+			setMessage('Не правильно. ' + a + ' * ' + b + ' = ' + rightResult);
 		}
 		setA(getRandomInt(2, 10));
 		setB(getRandomInt(2, 10));
@@ -62,13 +68,14 @@ const Table = () => {
 		<h1>Умножение</h1>
 		<button className={'mainButton'} disabled={mode === 'inProgress'} onClick={handleStartClick}>Начать</button>
 		<p className={'numbers'}>{total}</p>
-	<Progressbar completed={Math.round(timeLeft*100/60)}  customLabel=""/>
-	<div className={'container'}>
-		<p className={'numbers'}>{a} * {b}</p>
-		<input ref={inputRef}  className={'result'} value={result} onKeyDown={handleKeyPress} type={'number'} onChange={(e) => setResult(e.target.value)}/>
-		<button disabled={mode !=='inProgress'} className={'mainButton'}  onClick={handleClick}>Ответ</button>
-		<div className={'message'}>{message}</div>
-	</div>
+		<Progressbar completed={Math.round(timeLeft * 100 / 60)} customLabel=""/>
+		<div className={'container'}>
+			<p className={'numbers'}>{a} * {b}</p>
+			<input ref={inputRef} className={'result'} value={result} onKeyDown={handleKeyPress} type={'number'}
+				   onChange={(e) => setResult(e.target.value)}/>
+			<button disabled={mode !== 'inProgress'} className={'mainButton'} onClick={handleButtonClick}>Ответ</button>
+			<div className={'message'}>{message}</div>
+		</div>
 	</>
 };
 
